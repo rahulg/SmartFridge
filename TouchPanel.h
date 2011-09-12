@@ -55,6 +55,9 @@ uchar tch_read_block() {
 	adc_lr_t x, y;
 	uchar block = 0;
 	
+	x = tch_read_x();
+	y = tch_read_y();
+	
 	if (MIN < x && x < MAX) {
 		block = 0x10;
 	} else if (MIN < x && x < MAX) {
@@ -89,13 +92,13 @@ int read_numpad(int digits) {
 	int i, val=0, result;
 	uchar block;
 	
+	ADC_ON = 1;
+	
 	// Loop for req digits
 	for (i = 0; i < digits; ++i) {
 		
 		do {
-			
 			block = tch_read_block();
-			
 		} while (block != TCH_FAIL && 1 < block&0xF0 && block&0xF0 < 5);
 		// loop as long as either row or col is invalid
 		
@@ -145,6 +148,8 @@ int read_numpad(int digits) {
 		// append digit
 		result = result * 10 + val;
 	}
+	
+	ADC_ON = 0;
 	
 	return result;
 }
