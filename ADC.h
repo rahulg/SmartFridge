@@ -8,12 +8,23 @@
 #ifndef __HEADER_ADC__
 #define	__HEADER_ADC__
 
+
+// Include Headers
 #include "Definitions.h"
 #include "Delay.h"
 
-#define ADC_ON  ADON=1;
-#define ADC_OFF ADON=0;
 
+// Key Definitions
+#define ADC_ON ADON
+
+#define LOWRES  0
+#define HIGHRES 1
+
+typedef unsigned int adc_t;
+typedef unsigned char adc_lr_t;
+
+
+// Code
 volatile uchar _portConfig;
 
 void adc_init(uchar portConfig) {

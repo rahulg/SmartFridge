@@ -14,9 +14,4 @@
 typedef unsigned char uchar;
 typedef unsigned int uint;
 
-/*
- * Typedefs
- */
-typedef unsigned int adc_t;
-
 #endif

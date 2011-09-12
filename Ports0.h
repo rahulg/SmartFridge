@@ -21,8 +21,8 @@
 /*
  * Pin Allocations: ADC
  */
-#define TCH_P4A	adc_read(0)
-#define TCH_P3A	adc_read(1)
+#define TCH_P4A	adc_read(0,LOWRES)
+#define TCH_P3A	adc_read(1,LOWRES)
 
 /*
  * TRIS
