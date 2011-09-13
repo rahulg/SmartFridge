@@ -3,6 +3,9 @@
  * Group 1-5
  * A. G. Rahul
  *
+ * LCD library by Joe Kwuen
+ * http://joekwuen.blogspot.com/2011/01/project-pic-lcd-module.html
+ *
  */
 
 #ifndef __HEADER_LCD__
