@@ -12,8 +12,9 @@
 #include "io16f877.h"
 
 #include "Definitions.h"
-#include "Support.h"
 #include "Ports0.h"
+#include "Support.h"
+#include "TouchPanel.h"
 
 int main(void) {
 	return 0;

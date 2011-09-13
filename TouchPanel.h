@@ -9,7 +9,6 @@
 #define	__HEADER_TOUCHPANEL__
 
 #include "Definitions.h"
-#include "Ports0.h"
 #include "Delay.h"
 
 #define TCH_FAIL 0xFF
