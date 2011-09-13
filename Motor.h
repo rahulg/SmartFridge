@@ -10,7 +10,7 @@
 
 void motor_move(uint time) {
 	D_MOTOR = HIGH;
-	delay_usec(time);
+	delay_msec(time);
 	D_MOTOR = LOW;
 	delay_usec(2);
 }
