@@ -33,10 +33,10 @@ void adc_init(uchar portConfig) {
 	_portConfig = portConfig;
 	
 	// Clock selection: 32Tosc
-	ADCS1 = 1; ADCS0 = 0;
+	ADCS1 = HIGH; ADCS0 = LOW;
 	
 	// Turn on ADC
-	ADON = 1;
+	ADON = HIGH;
 }
 
 adc_t adc_read(int channel, int highRes) {

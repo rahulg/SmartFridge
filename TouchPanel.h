@@ -15,7 +15,7 @@
 
 void tch_init() {
 	adc_init(0x02);
-	ADC_ON = 0;
+	ADC_ON = LOW;
 }
 
 adc_lr_t tch_read_x() {
@@ -23,8 +23,8 @@ adc_lr_t tch_read_x() {
 	
 	// Set I/O mode and pull pins high/low
 	TCH_TRS = (TCH_TRS & 0xF0) | 0x05;
-	TCH_P4D = 1;
-	TCH_P2D = 0;
+	TCH_P4D = HIGH;
+	TCH_P2D = LOW;
 	
 	// stabilisation
 	delay_msec(1);
@@ -39,8 +39,8 @@ adc_lr_t tch_read_y() {
 	
 	// Set I/O mode and pull pins high/low
 	TCH_TRS = (TCH_TRS & 0xF0) | 0x0A;
-	TCH_P1D = 1;
-	TCH_P3D = 0;
+	TCH_P1D = HIGH;
+	TCH_P3D = LOW;
 	
 	// stabilisation
 	delay_msec(1);
@@ -91,7 +91,7 @@ int read_numpad(int digits) {
 	int i, val=0, result;
 	uchar block;
 	
-	ADC_ON = 1;
+	ADC_ON = HIGH;
 	
 	// Loop for req digits
 	for (i = 0; i < digits; ++i) {
@@ -148,7 +148,7 @@ int read_numpad(int digits) {
 		result = result * 10 + val;
 	}
 	
-	ADC_ON = 0;
+	ADC_ON = LOW;
 	
 	return result;
 }

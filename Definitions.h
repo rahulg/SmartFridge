@@ -14,4 +14,10 @@
 typedef unsigned char uchar;
 typedef unsigned int uint;
 
+/*
+ * Aliases
+ */
+#define LOW 0
+#define HIGH 1
+
 #endif
