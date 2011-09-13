@@ -36,6 +36,13 @@
 #define LCD_EN  R
 
 /*
+ * Pin Allocations
+ */
+#define EM_LOCK RC2
+#define D_MOTOR RC0
+#define D_PUSHB RC1
+
+/*
  * TRIS
  */
 #define TCH_TRS	TRISA

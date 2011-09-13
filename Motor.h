@@ -5,13 +5,13 @@
  *
  */
 
-#ifndef __HEADER_SERVO__
-#define	__HEADER_SERVO__
+#ifndef __HEADER_MOTOR__
+#define	__HEADER_MOTOR__
 
-void servo_move(uint time) {
-	D_SERVO = HIGH;
+void motor_move(uint time) {
+	D_MOTOR = HIGH;
 	delay_usec(time);
-	D_SERVO = LOW;
+	D_MOTOR = LOW;
 	delay_usec(2);
 }
 

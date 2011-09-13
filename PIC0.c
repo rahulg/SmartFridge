@@ -17,5 +17,6 @@
 #include "TouchPanel.h"
 
 int main(void) {
+	tmr1_init();
 	return 0;
 }

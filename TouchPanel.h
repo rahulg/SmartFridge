@@ -86,9 +86,9 @@ uchar tch_read_block() {
 	return block;
 }
 
-int read_numpad(int digits) {
+uint read_numpad(uint digits) {
 	
-	int i, val=0, result;
+	uint i, val=0, result;
 	uchar block;
 	
 	ADC_ON = HIGH;
