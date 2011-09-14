@@ -17,10 +17,10 @@
 #define LDATA 1
 #define INSTR 0
 
-uchar lcd_y = 0;
-uchar lcd_x = 4;
+volatile uchar lcd_x = 0;
+volatile uchar lcd_y = 4;
 
-void lcd_write(uchar data, uchar di, uchar cs) {
+void lcd_write(uchar data, uchar di, uchar cs1, uchar cs2) {
 	// Initialise
 	LCD_CS1 = LOW;
 	LCD_CS2 = LOW;
@@ -28,9 +28,9 @@ void lcd_write(uchar data, uchar di, uchar cs) {
 	LCD_RW = LOW;
 	
 	// Internal chip selects
-	if (cs & 0x01)
+	if (cs1)
 		LCD_CS1 = HIGH;
-	if (cs & 0x02)
+	if (cs2)
 		LCD_CS2 = HIGH;
 	
 	// Data / Instruction
@@ -39,13 +39,18 @@ void lcd_write(uchar data, uchar di, uchar cs) {
 	else
 		LCD_RS = LOW;
 	
-	LCD_EN = HIGH;
-	delay_usec(10); // stabilisation delay
 	LCD_DAT = data;
-	delay_usec(10); // stabilisation delay
+	
+	// falling edge will latch data in register
+	delay_usec(30);
+	LCD_EN = HIGH;
+	delay_usec(3);
 	LCD_EN = LOW;
+	delay_usec(160);
+	
 }
 
+/* DISABLED
 uchar lcd_read(uchar di, uchar cs) {
 	uchar data;
 	// Initialise
@@ -73,7 +78,7 @@ uchar lcd_read(uchar di, uchar cs) {
 	LCD_EN = LOW;
 	
 	return data;
-}
+} DISABLED */
 
 void lcd_init() {
 	// Reset LCD
@@ -84,44 +89,59 @@ void lcd_init() {
 	LCD_RES = HIGH;
 	
 	// Display ON
-	lcd_write(0x3F, INSTR, 0x03);
+	lcd_write(0x3F, INSTR, 1, 1);
 	
 	// Start on line 0
-	lcd_write(0xC0, INSTR, 0x03);
+	lcd_write(0xC0, INSTR, 1, 1);
+	
 }
 
 void lcd_clear() {
-	uchar y, x = 0;
+	uchar x, y = 0;
 	
-	for (y = 0; y < 8; ++y) {
-		lcd_write((y & 0x07) | 0xB8, INSTR, 0x03);
-		lcd_write(0x40, INSTR, 0x03);
-		for (x = 0; x < 64; ++x) {
-			lcd_write(0x00, LDATA, 0x03);
+	for (x = 0; x < 8; ++x) {
+		lcd_write((x & 0x07) | 0xB8, INSTR, 1, 1);
+		lcd_write(0x40, INSTR, 1, 1);
+		for (y = 0; y < 64; ++y) {
+			lcd_write(0x00, LDATA, 1, 1);
 		}
 	}
 }
 
-void lcd_set_page(uchar y, uchar x, uchar data) {
-	uchar sel;
+void lcd_allon() {
+	uchar x, y = 0;
 	
-	if (x < 64) {
-		sel = 0x01;
-	} else {
-		sel = 0x02;
-		x -= 64;
+	for (x = 0; x < 8; ++x) {
+		lcd_write((x & 0x07) | 0xB8, INSTR, 1, 1);
+		lcd_write(0x40, INSTR, 1, 1);
+		for (y = 0; y < 64; ++y) {
+			lcd_write(0xFF, LDATA, 1, 1);
+		}
 	}
-	
-	lcd_write(x + 0x40, INSTR, sel);
-	lcd_write(y + 0xB8, INSTR, sel);
-	lcd_write(data, LDATA, sel);
 }
 
-void lcd_put_char(uchar data) {
+void lcd_set_page(uchar x, uchar y, uchar data) {
+	uchar cs1, cs2;
+	
+	if (y < 64) {
+		cs1 = 1;
+		cs2 = 0;
+	} else {
+		cs1 = 0;
+		cs2 = 1;
+		y -= 64;
+	}
+	
+	lcd_write(y + 0x40, INSTR, cs1, cs2);
+	lcd_write(x + 0xB8, INSTR, cs1, cs2);
+	lcd_write(data, LDATA, cs1, cs2);
+}
+
+void lcd_write_char(uchar data) {
 	uchar i;
 	uchar glyph[5] = {0,0,0,0,0};
 	
-	switch(ch)
+	switch(data)
 	{
 		case ' ':
 			glyph[0] = 0x00;
@@ -763,17 +783,23 @@ void lcd_put_char(uchar data) {
 	}
 	
 	for (i = 0; i < 5; ++i) {
-		lcd_set_page(lcd_y, lcd_x + i, glyph[i]);
+		lcd_set_page(lcd_x, lcd_y + i, glyph[i]);
 	}
 	
-	lcd_set_page(lcd_y, lcd_x + 5, 0x00);
-	lcd_x += 6;
-	if (lcd_x >= 124) {
-		lcd_x = 4;
-		++lcd_y;
-		if (lcd_y >= 8) {
-			lcd_y = 0;
+	lcd_set_page(lcd_x, lcd_y + 5, 0x00);
+	lcd_y += 6;
+	if (lcd_y >= 124) {
+		lcd_y = 4;
+		++lcd_x;
+		if (lcd_x >= 8) {
+			lcd_x = 0;
 		}
+	}
+}
+
+void lcd_write_str(char* str) {
+	while (*str) {
+		lcd_write_char(*(str++));
 	}
 }
 

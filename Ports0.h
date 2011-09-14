@@ -28,12 +28,12 @@
  * Pin Allocations: LCD
  */
 #define LCD_DAT PORTB
-#define LCD_CS1 R
-#define LCD_CS2 R
-#define LCD_RES R
-#define LCD_RW  R
-#define LCD_RS  R
-#define LCD_EN  R
+#define LCD_CS1 RA4
+#define LCD_CS2 RA5
+#define LCD_RES RE0
+#define LCD_RW  RC4
+#define LCD_RS  RE1
+#define LCD_EN  RE2
 
 /*
  * Pin Allocations
@@ -46,6 +46,8 @@
  * TRIS
  */
 #define TCH_TRS	TRISA
-#define LCD_TRS TRISB
+#define LCD_TR1 TRISB
+#define LCD_TR2 TRISA
+#define LCD_TR3 TRISE
 
 #endif

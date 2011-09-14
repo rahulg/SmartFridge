@@ -15,8 +15,20 @@
 #include "Ports0.h"
 #include "Support.h"
 #include "TouchPanel.h"
+#include "LCD.h"
 
 int main(void) {
-	tmr1_init();
-	return 0;
+	ADCON1 = 0x06;
+	TRISA = 0x00;
+	TRISB = 0x00;
+	TRISC = 0x00;
+	TRISE = 0x00;
+	
+	lcd_init();
+	lcd_allon();
+	delay_msec(100);
+	lcd_clear();
+	delay_msec(100);
+	
+	lcd_write_str("Hello World!");
 }
