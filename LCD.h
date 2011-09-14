@@ -3,7 +3,8 @@
  * Group 1-5
  * A. G. Rahul
  *
- * LCD library by Joe Kwuen
+ * Thanks to
+ * http://radzio.dxp.pl/ks0108/
  * http://joekwuen.blogspot.com/2011/01/project-pic-lcd-module.html
  *
  */
