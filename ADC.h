@@ -63,7 +63,7 @@ adc_t adc_read(int channel, int highRes) {
 			CHS2=1; CHS1=0; CHS0=0;
 			break;
 		case 5:
-			CHS2=1; CHS1=0; CHS01;
+			CHS2=1; CHS1=0; CHS0=1;
 			break;
 		case 6:
 			CHS2=1; CHS1=1; CHS0=0;
