@@ -51,36 +51,6 @@ void lcd_write(uchar data, uchar di, uchar cs1, uchar cs2) {
 	
 }
 
-/* DISABLED
-uchar lcd_read(uchar di, uchar cs) {
-	uchar data;
-	// Initialise
-	LCD_CS1 = LOW;
-	LCD_CS2 = LOW;
-	LCD_EN = LOW;
-	LCD_RW = HIGH;
-	
-	// Internal chip selects
-	if (cs & 0x01)
-		LCD_CS1 = HIGH;
-	if (cs & 0x02)
-		LCD_CS2 = HIGH;
-	
-	// Data / Instruction
-	if (di)
-		LCD_RS = HIGH;
-	else
-		LCD_RS = LOW;
-	
-	LCD_EN = HIGH;
-	delay_usec(10); // stabilisation delay
-	data = LCD_DAT;
-	delay_usec(10); // stabilisation delay
-	LCD_EN = LOW;
-	
-	return data;
-} DISABLED */
-
 void lcd_init() {
 	// Reset LCD
 	LCD_CS1 = HIGH;
