@@ -13,6 +13,10 @@
 
 #define TCH_FAIL 0xFF
 
+// TEMP DEF
+#define MIN 1
+#define MAX 2
+
 void tch_init() {
 	adc_init(0x02);
 	ADC_ON = LOW;
