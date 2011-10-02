@@ -35,10 +35,11 @@ void init_ctrl() {
 	ADCON1 = 0x06;
 	TRISA = 0x00;
 	TRISB = 0x00;
-	TRISC = 0xFF;
+	TRISC = 0xBF;
 	TRISD = 0x00;
 	TRISE = 0xFF;
 	
+	PORTA = 0x00;
 	PORTB = 0x00;
 	PORTD = 0x00;
 }

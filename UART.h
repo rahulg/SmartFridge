@@ -23,9 +23,11 @@ typedef enum {
 
 void uart_init() {
 	// RC7 as input, RC6 as output
+	/*
 	TRISC = TRISC | 0x80;
-	TRISC = TRISC & 0xBF
-	
+	TRISC = TRISC & 0xBF;
+	*/
+
 	BRGH = 0; // Low Speed
 	SPBRG = 0x81; // 0x81 = 2400, 0x1F = 9600
 	

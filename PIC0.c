@@ -57,7 +57,7 @@ __interrupt void isr(void)
 				sync_state = SYNC_IDLE;
 			} else {
 				TXREG = NAK;
-				sync_state = SYNC_IDLE
+				sync_state = SYNC_IDLE;
 			}
 		} else {
 			sync_state = SYNC_IDLE;
@@ -68,7 +68,7 @@ __interrupt void isr(void)
 int main(void) {
 	
 	init_ctrl();
-	
+	uart_init();
 	ui_init();
 	while (1) {
 		ui_update();
