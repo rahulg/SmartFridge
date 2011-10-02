@@ -19,7 +19,7 @@
 #define INSTR 0
 
 volatile uchar lcd_x = 0;
-volatile uchar lcd_y = 4;
+volatile uchar lcd_y = 0;
 
 void lcd_write(uchar data, uchar di, uchar cs1, uchar cs2) {
 	// Initialise
@@ -760,7 +760,7 @@ void lcd_write_char(uchar data) {
 	lcd_set_page(lcd_x, lcd_y + 5, 0x00);
 	lcd_y += 6;
 	if (lcd_y >= 124) {
-		lcd_y = 4;
+		lcd_y = 0;
 		++lcd_x;
 		if (lcd_x >= 8) {
 			lcd_x = 0;
