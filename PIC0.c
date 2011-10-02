@@ -18,17 +18,13 @@
 #include "LCD.h"
 
 int main(void) {
-	ADCON1 = 0x06;
-	TRISA = 0x00;
-	TRISB = 0x00;
-	TRISC = 0x00;
-	TRISE = 0x00;
+	
+	init_ctrl();
 	
 	lcd_init();
 	lcd_allon();
-	delay_msec(100);
 	lcd_clear();
-	delay_msec(100);
 	
-	lcd_write_str("Hello World!");
+	lcd_write_str("System Init");
+	delay_msec(200);
 }

@@ -47,7 +47,7 @@ void lcd_write(uchar data, uchar di, uchar cs1, uchar cs2) {
 	LCD_EN = HIGH;
 	delay_usec(3);
 	LCD_EN = LOW;
-	delay_usec(160);
+	delay_usec(100);
 	
 }
 
@@ -490,7 +490,7 @@ void lcd_write_char(uchar data) {
 			glyph[1] = 0x22;
 			glyph[2] = 0x1C;
 			glyph[3] = 0x22;
-			glyph[4] = 0x7F;
+			glyph[4] = 0x41;
 			break;
 		case 'Y':
 			glyph[0] = 0x07;

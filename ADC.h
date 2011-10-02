@@ -13,38 +13,25 @@
 #include "Definitions.h"
 #include "Delay.h"
 
-
-// Key Definitions
-#define ADC_ON ADON
-
-#define LOWRES  0
-#define HIGHRES 1
-
 typedef unsigned int adc_t;
-typedef unsigned char adc_lr_t;
 
 
 // Code
-volatile uchar _portConfig;
 
-void adc_init(uchar portConfig) {
-	TRISA = 0x00; // PORTA as output
+void adc_init() {
 	
-	_portConfig = portConfig;
+	ADCON1 = 0x8E;
 	
 	// Clock selection: 32Tosc
-	ADCS1 = HIGH; ADCS0 = LOW;
+	ADCS1 = 1; ADCS0 = 0;
 	
 	// Turn on ADC
-	ADON = HIGH;
+	ADON = 1;
 }
 
-adc_t adc_read(int channel, int highRes) {
+adc_t adc_read(int channel) {
 	
 	adc_t value;
-	
-	// Left-justify if lowres
-	ADCON1 = (highRes ? 0x80 : 0x00) & _portConfig;
 	
 	switch (channel) {
 		case 0:
@@ -84,7 +71,7 @@ adc_t adc_read(int channel, int highRes) {
 	while (GO);
 	
 	// Read the values in the register pair
-	value = highRes ? (ADRESH << 8) + ADRESL : ADRESH;
+	value = (ADRESH << 8) + ADRESL;
 	
 	// Wait for 2TAD
 	delay_usec(4);
