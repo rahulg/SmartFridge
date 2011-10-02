@@ -12,14 +12,11 @@
 #ifndef __HEADER_LCD__
 #define	__HEADER_LCD__
 
-#include "Definitions.h"
-#include "Delay.h"
-
 #define LDATA 1
 #define INSTR 0
 
-volatile uchar lcd_x = 0;
-volatile uchar lcd_y = 0;
+uchar lcd_y = 0;
+uchar lcd_x = 0;
 
 void lcd_write(uchar data, uchar di, uchar cs1, uchar cs2) {
 	// Initialise
@@ -43,12 +40,9 @@ void lcd_write(uchar data, uchar di, uchar cs1, uchar cs2) {
 	LCD_DAT = data;
 	
 	// falling edge will latch data in register
-	delay_usec(30);
 	LCD_EN = HIGH;
-	delay_usec(3);
-	LCD_EN = LOW;
-	delay_usec(100);
-	
+	delay_usec(1);
+	LCD_EN = LOW;	
 }
 
 void lcd_init() {
@@ -108,7 +102,7 @@ void lcd_set_page(uchar x, uchar y, uchar data) {
 	lcd_write(data, LDATA, cs1, cs2);
 }
 
-void lcd_write_char(uchar data) {
+void lcd_char(uchar data) {
 	uchar i;
 	uchar glyph[5] = {0,0,0,0,0};
 	
@@ -204,6 +198,13 @@ void lcd_write_char(uchar data) {
 			glyph[2] = 0x60;
 			glyph[3] = 0x00;
 			glyph[4] = 0x00;
+			break;
+		case '/':
+			glyph[0] = 0x10;
+			glyph[1] = 0x20;
+			glyph[2] = 0x10;
+			glyph[3] = 0x08;
+			glyph[4] = 0x04;
 			break;
 		case '0':
 			glyph[0] = 0x3E;
@@ -513,12 +514,19 @@ void lcd_write_char(uchar data) {
 			glyph[3] = 0x00;
 			glyph[4] = 0x00;
 			break;
-		case '/':
+		case '\\':
+			glyph[0] = 0x22;
+			glyph[1] = 0x14;
+			glyph[2] = 0x08;
+			glyph[3] = 0x14;
+			glyph[4] = 0x22;
+			/*
 			glyph[0] = 0x02;
 			glyph[1] = 0x04;
 			glyph[2] = 0x08;
 			glyph[3] = 0x10;
 			glyph[4] = 0x20;
+			 */
 			break;
 		case ']':
 			glyph[0] = 0x00;
@@ -754,24 +762,31 @@ void lcd_write_char(uchar data) {
 	}
 	
 	for (i = 0; i < 5; ++i) {
-		lcd_set_page(lcd_x, lcd_y + i, glyph[i]);
+		lcd_set_page(lcd_y, lcd_x + i, glyph[i]);
 	}
 	
-	lcd_set_page(lcd_x, lcd_y + 5, 0x00);
-	lcd_y += 6;
-	if (lcd_y >= 124) {
-		lcd_y = 0;
-		++lcd_x;
-		if (lcd_x >= 8) {
-			lcd_x = 0;
+	lcd_set_page(lcd_y, lcd_x + 5, 0x00);
+	lcd_x += 6;
+	if (lcd_x >= 128) {
+		lcd_x = 0;
+		++lcd_y;
+		if (lcd_y >= 8) {
+			lcd_y = 0;
 		}
 	}
 }
 
-void lcd_write_str(char* str) {
+void lcd_str(char* str, uchar cur_x, uchar cur_y) {
+	lcd_x = cur_x;
+	lcd_y = cur_y;
 	while (*str) {
-		lcd_write_char(*(str++));
+		lcd_char(*(str++));
 	}
+}
+
+void lcd_header(char* str) {
+	uchar count = strlen(str);
+	lcd_str(str, (128-(count*6))/2, 0);
 }
 
 #endif

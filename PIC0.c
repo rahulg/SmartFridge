@@ -12,19 +12,18 @@
 #include "io16f877.h"
 
 #include "Definitions.h"
-#include "Ports0.h"
 #include "Support.h"
-#include "TouchPanel.h"
+#include "Delay.h"
+#include "Ports0.h"
 #include "LCD.h"
+#include "UserInterface.h"
 
 int main(void) {
 	
 	init_ctrl();
 	
-	lcd_init();
-	lcd_allon();
-	lcd_clear();
-	
-	lcd_write_str("System Init");
-	delay_msec(200);
+	ui_init();
+	while (1) {
+		ui_update();
+	}
 }
