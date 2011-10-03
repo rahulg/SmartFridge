@@ -23,6 +23,8 @@ typedef enum {
 } syncstate;
 
 volatile syncstate sync_state;
+volatile uchar data_bytes = 0;
+volatile uchar recipe_data[7];
 
 void sync_init() {
 	uart_init();
@@ -37,6 +39,7 @@ void sync_update() {
 		|| (sync_state == SYNC_WACK && inp_buf == ACK)) {
 		
 		TXREG = EOT;
+		data_bytes = 0;
 		sync_state = SYNC_IDLE;
 		return;
 		
@@ -62,7 +65,11 @@ void sync_update() {
 		
 	} else if (sync_state == SYNC_WDAT) {
 		
-		// inp_buf contains data!
+		recipe_data[data_bytes++] = inp_buf;
+		
+		if (data_bytes == 6) {
+			// write to eep now!
+		}
 		return;
 		
 	}
