@@ -41,10 +41,12 @@ void uart_init() {
 	TX9D = 0;
 	RX9D = 0;
 	
-	TRMT = 1; // Set TSR empty
+	// Set TSR empty
+	TRMT = 1;
 	
-	TXEN = 1; // Enable TX
-	CREN = 1; // Enable RX
+	// Enable TX / RX
+	TXEN = 1;
+	CREN = 1;
 	
 	TXIE = 0; // Disable TX interrupt
 	RCIE = 1; // Enable RX interrupt
