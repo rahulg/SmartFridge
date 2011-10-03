@@ -14,34 +14,44 @@
 #define LCD_DAT PORTB
 
 // Proper Alloc: RC0, RC1, RC2, RC3, RD0, RD1
-#define LCD_CS1 RA5
-#define LCD_CS2 RA4
-#define LCD_RES RA3
-#define LCD_RW  RA2
-#define LCD_RS  RA1
-#define LCD_EN  RA0
+// Fake Alloc: RA5, RA4, RA3, RA2, RA1, RA0
+#define LCD_CS1 RC0
+#define LCD_CS2 RC1
+#define LCD_RES RC2
+#define LCD_RW  RC3
+#define LCD_RS  RD0
+#define LCD_EN  RD1
 
-#define BTN_L1 RC0
-#define BTN_L2 RC1
-#define BTN_L3 RC2
-#define BTN_R1 RC3
-#define BTN_R2 RC4
-#define BTN_R3 RC5
+#define BTN_L1 RD7
+#define BTN_L2 RD5
+#define BTN_L3 RD3
+#define BTN_R1 RD6
+#define BTN_R2 RD4
+#define BTN_R3 RD2
+
+#define OUT_REC RC4
+
+#define TMP_GR PORTA
+#define TMP_R0 RA5
+#define TMP_R1 RE0
+#define TMP_R2 RE1
 
 /*
  * Control Registers
  */
 void init_ctrl() {
 	ADCON1 = 0x06;
-	TRISA = 0x00;
+	TRISA = 0x1F;
 	TRISB = 0x00;
-	TRISC = 0xBF;
-	TRISD = 0x00;
-	TRISE = 0xFF;
+	TRISC = 0x80;
+	TRISD = 0xFC;
+	TRISE = 0x00;
 	
 	PORTA = 0x00;
 	PORTB = 0x00;
+	PORTC = 0x00;
 	PORTD = 0x00;
+	PORTE = 0x00;
 }
 
 #endif

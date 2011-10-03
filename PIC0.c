@@ -17,10 +17,9 @@
 #include "Ports0.h"
 #include "LCD.h"
 #include "UART.h"
-#include "UserInterface.h"
+#include "EEPROM.h"
 #include "Sync.h"
-
-
+#include "UserInterface.h"
 
 /*
  * Interrupt Service Routine
@@ -28,7 +27,7 @@
 #pragma vector=0x04
 __interrupt void isr(void)
 {
-	if (RCIE == 1) {
+	if (RCIF == 1) {
 		sync_update();
 	}
 }

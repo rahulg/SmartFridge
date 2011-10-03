@@ -8,6 +8,8 @@
 #ifndef __HEADER_UI__
 #define	__HEADER_UI__
 
+#define REC_PULSE 40
+
 #define roffset(len) (128-(6*len))
 
 typedef enum {
@@ -24,7 +26,7 @@ typedef enum {
 	UI_MAIN,
 	UI_GROC,
 	UI_REC,
-	UI_SYNC
+	UI_MEMO
 } uistate;
 
 uistate ui_state = UI_MAIN;
@@ -53,10 +55,15 @@ button button_poll() {
 	}
 }
 
-void recipe_name(uchar index, uchar* str) {
-	uchar i;
-	for (i = 1; i < 6; ++i) {
-		str[i-1] = eep_read(index * 6 + i);
+void recipe_name(uchar index, char* str) {
+	eep_rstr(str, index * 6 + 1, 5);
+}
+
+void chk_sync() {
+	if (sync_state == SYNC_OFF) {
+		lcd_str("OFF", 42, 6);
+	} else {
+		lcd_str("ON ", 42, 6);
 	}
 }
 
@@ -65,11 +72,20 @@ void ui_main() {
 	lcd_header("SmartFridge");
 	lcd_str("<Groceries", 0, 2);
 	lcd_str("<Recipes", 0, 4);
-	lcd_str("<Sync", 0, 6);
+	lcd_str("<Sync:", 0, 6);
+	lcd_str("Memo>", roffset(5), 2);
+	lcd_str("Reset>", roffset(6), 6);
+	chk_sync();
+}
+
+void chk_grocery() {
+	temp = TMP_GR & 0x1F;
+	for (ii = 0; ii < 5; ++ii) {
+		lcd_str(temp & (0x01<<ii) ? "/" : "\\", 42, ii+2);
+	}
 }
 
 void ui_groceries() {
-	uchar i;
 	lcd_clear();
 	lcd_header("Groceries");
 	lcd_str("Milk", 6, 2);
@@ -77,14 +93,14 @@ void ui_groceries() {
 	lcd_str("Fruit", 6, 4);
 	lcd_str("Veg", 6, 5);
 	lcd_str("Chocs", 6, 6);
+	lcd_str("Refresh>", roffset(8), 2);
 	lcd_str("Back>", roffset(5), 6);
-	for (i = 0; i < 5; ++i) {
-		lcd_str(i%2?"/":"\\", 42, i+2);
-	}
+	chk_grocery();
 }
 
 void ui_recipes() {
-	char str[6];
+	char str[7];
+	str[6] = 0x00;
 	lcd_clear();
 	lcd_header("Recipes");
 	str[0] = '<';
@@ -102,11 +118,19 @@ void ui_recipes() {
 	lcd_str("Back>", roffset(5), 6);
 }
 
-void ui_sync() {
+void ui_memo() {
 	lcd_clear();
-	lcd_header("Sync");
-	// TODO: initiate UART sync here
-	lcd_str("Back>", roffset(5), 6);
+	lcd_header("Memo");
+	lcd_str("Recording...", 28, 4);
+	lcd_str("Stop>", roffset(5), 2);
+}
+
+void tmp_recout(uchar code) {
+	TMP_R2 = (code & 0x04) >> 2;
+	TMP_R1 = (code & 0x02) >> 1;
+	TMP_R0 = code * 0x01;
+	delay_msec(REC_PULSE);
+	TMP_R2 = 0; TMP_R1 = 0; TMP_R0 = 0;
 }
 
 void ui_manage(button pressed) {
@@ -121,14 +145,31 @@ void ui_manage(button pressed) {
 				ui_recipes();
 				break;
 			case BUTTON_L3:
-				ui_state = UI_SYNC;
-				ui_sync();
+				if (sync_state == SYNC_OFF) {
+					sync_state = SYNC_IDLE;
+				} else {
+					sync_state = SYNC_OFF;
+				}
+				chk_sync();
+				break;
+			case BUTTON_R1:
+				ui_state = UI_MEMO;
+				OUT_REC = 1;
+				ui_memo();
+				delay_msec(REC_PULSE);
+				OUT_REC = 0;
+				break;
+			case BUTTON_R3:
+				eep_set();
 				break;
 			default:
 				break;
 		}
 	} else if (ui_state == UI_GROC) {
 		switch (pressed) {
+			case BUTTON_R1:
+				chk_grocery();
+				break;
 			case BUTTON_R3:
 				ui_state = UI_MAIN;
 				ui_main();
@@ -137,8 +178,22 @@ void ui_manage(button pressed) {
 				break;
 		}
 	} else if (ui_state == UI_REC) {
-		// TODO: implement recipe selection
 		switch (pressed) {
+			case BUTTON_L1:
+				tmp_recout(1);
+				break;
+			case BUTTON_L2:
+				tmp_recout(2);
+				break;
+			case BUTTON_L3:
+				tmp_recout(3);
+				break;
+			case BUTTON_R1:
+				tmp_recout(4);
+				break;
+			case BUTTON_R2:
+				tmp_recout(5);
+				break;
 			case BUTTON_R3:
 				ui_state = UI_MAIN;
 				ui_main();
@@ -146,11 +201,14 @@ void ui_manage(button pressed) {
 			default:
 				break;
 		}
-	} else if (ui_state == UI_SYNC) {
+	} else if (ui_state == UI_MEMO) {
 		switch (pressed) {
-			case BUTTON_R3:
+			case BUTTON_R1:
 				ui_state = UI_MAIN;
+				OUT_REC = 1;
 				ui_main();
+				delay_msec(REC_PULSE);
+				OUT_REC = 0;
 				break;
 			default:
 				break;

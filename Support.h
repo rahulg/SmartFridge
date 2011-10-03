@@ -16,11 +16,11 @@
 #define itoa(a) (a+0x30)
 
 uchar strlen(char* str) {
-	uchar count = 0;
+	ii = 0;
 	while (*str++) {
-		++count;
+		++ii;
 	}
-	return count;
+	return ii;
 }
 
 #endif

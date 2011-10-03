@@ -9,15 +9,13 @@
 #define	__HEADER_EEP__
 
 uchar eep_read(uchar addr) {
-	uchar data;
 	
 	EEADR = addr;
 	EEPGD = 0; // Write to data EEPROM
 	RD = 1; // Initiate read
 	
-	data = EEDATA;
-	delay_msec(20);
-	return data;
+	temp = EEDATA;
+	return temp;
 }
 
 void eep_write(uchar addr, uchar data) {
@@ -40,6 +38,23 @@ void eep_write(uchar addr, uchar data) {
 	EEIF = 0;
 	GIE = 1;
 	
+}
+
+void eep_rstr(char* str, uchar index, uchar length) {
+	for (ii = 0; ii < length; ++ii) {
+		str[ii] = eep_read(index+ii);
+	}
+}
+
+void eep_set() {
+	for (ii = 0; ii < 5; ++ii) {
+		eep_write(6*ii, 0x00);
+		eep_write(6*ii +1, 'E');
+		eep_write(6*ii +2, 'm');
+		eep_write(6*ii +3, 'p');
+		eep_write(6*ii +4, 't');
+		eep_write(6*ii +5, 'y');
+	}
 }
 
 #endif

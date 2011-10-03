@@ -20,4 +20,10 @@ typedef unsigned int uint;
 #define LOW 0
 #define HIGH 1
 
+/*
+ * Global temps
+ */
+uchar ii, temp, del1;
+uint del2;
+
 #endif

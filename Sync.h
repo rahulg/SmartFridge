@@ -13,9 +13,11 @@
 #define NAK 0x15
 #define EOT 0x04
 #define DC1 0x11
+#define DC2 0x12
 #define CAN 0x18
 
 typedef enum {
+	SYNC_OFF,
 	SYNC_IDLE,
 	SYNC_WCMD,
 	SYNC_WDAT,
@@ -23,18 +25,22 @@ typedef enum {
 } syncstate;
 
 volatile syncstate sync_state;
-volatile uchar data_bytes = 0;
-volatile uchar recipe_data[7];
+uchar data_bytes = 0;
+uchar recipe_data[7];
 
 void sync_init() {
 	uart_init();
-	sync_state = SYNC_IDLE;
+	sync_state = SYNC_OFF;
 }
 
 void sync_update() {
 	
 	uchar addr;
 	uchar inp_buf = RCREG;
+	
+	if (sync_state == SYNC_OFF) {
+		return;
+	}
 	
 	if (inp_buf == CAN || inp_buf == EOT
 		|| (sync_state == SYNC_WACK && inp_buf == ACK)) {
@@ -55,7 +61,7 @@ void sync_update() {
 	} else if (sync_state == SYNC_WCMD) {
 		
 		if (inp_buf == DC1) {
-			TXREG = 0x80 | 0x00; // TODO: load low grocery state
+			TXREG = 0x80 | (PORTA & 0x1F); // TODO: load low grocery state
 			sync_state = SYNC_WACK;
 			return;
 		} else if (inp_buf == DC2) {
