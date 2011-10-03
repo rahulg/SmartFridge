@@ -33,9 +33,10 @@ void sync_init() {
 
 void sync_update() {
 	
+	uchar addr;
 	uchar inp_buf = RCREG;
 	
-	if (inp_buf == CAN || inp_buf == NAK
+	if (inp_buf == CAN || inp_buf == EOT
 		|| (sync_state == SYNC_WACK && inp_buf == ACK)) {
 		
 		TXREG = EOT;
@@ -66,9 +67,17 @@ void sync_update() {
 	} else if (sync_state == SYNC_WDAT) {
 		
 		recipe_data[data_bytes++] = inp_buf;
+		TXREG = ACK;
 		
-		if (data_bytes == 6) {
-			// write to eep now!
+		if (data_bytes > 6) {
+			sync_state = SYNC_WACK;
+			addr = recipe_data[0] & 0x7F; // reset bit 7
+			eep_write(addr, recipe_data[1]);
+			eep_write(addr+1, recipe_data[2]);
+			eep_write(addr+2, recipe_data[3]);
+			eep_write(addr+3, recipe_data[4]);
+			eep_write(addr+4, recipe_data[5]);
+			eep_write(addr+5, recipe_data[6]);
 		}
 		return;
 		

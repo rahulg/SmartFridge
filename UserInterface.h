@@ -53,6 +53,13 @@ button button_poll() {
 	}
 }
 
+void recipe_name(uchar index, uchar* str) {
+	uchar i;
+	for (i = 1; i < 6; ++i) {
+		str[i-1] = eep_read(index * 6 + i);
+	}
+}
+
 void ui_main() {
 	lcd_clear();
 	lcd_header("SmartFridge");
@@ -77,13 +84,21 @@ void ui_groceries() {
 }
 
 void ui_recipes() {
+	char str[6];
 	lcd_clear();
 	lcd_header("Recipes");
-	lcd_str("<R1", 0, 2);
-	lcd_str("<R2", 0, 4);
-	lcd_str("<R3", 0, 6);
-	lcd_str("R4>", roffset(3), 2);
-	lcd_str("R5>", roffset(3), 4);
+	str[0] = '<';
+	recipe_name(0, str+1);
+	lcd_str(str, 0, 2);
+	recipe_name(1, str+1);
+	lcd_str(str, 0, 4);
+	recipe_name(2, str+1);
+	lcd_str(str, 0, 6);
+	recipe_name(3, str);
+	str[5] = '>';
+	lcd_str(str, roffset(6), 2);
+	recipe_name(4, str);
+	lcd_str(str, roffset(6), 4);
 	lcd_str("Back>", roffset(5), 6);
 }
 
