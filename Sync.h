@@ -29,37 +29,36 @@ void sync_init() {
 }
 
 void sync_update() {
-	uchar inbuf = RCREG;
-	if (sync_state == SYNC_IDLE) {
-		if (inbuf == ENQ) {
+	
+	uchar inp_buf = RCREG;
+	
+	if (inp_buf == CAN || inp_buf == NAK
+		|| (sync_state == SYNC_WACK && inp_buf == ACK)) {
+		
+		TXREG = EOT;
+		sync_state = SYNC_IDLE;
+		return;
+		
+	} else if (sync_state == SYNC_IDLE) {
+		
+		if (inp_buf == ENQ) {
 			TXREG = ACK;
 			sync_state = SYNC_WCMD;
-		} else {
-			TXREG = NAK;
-			sync_state = SYNC_IDLE;
+			return;
 		}
+		
 	} else if (sync_state == SYNC_WCMD) {
-		if (inbuf == DC1) {
-			TXREG = 0x00; // TODO: load low grocery state
+		
+		if (inp_buf == DC1) {
+			TXREG = 0x80 | 0x00; // TODO: load low grocery state
 			sync_state = SYNC_WACK;
-		} else if (inbuf == CAN) {
-			TXREG = ACK;
-			sync_state = SYNC_IDLE;
-		} else {
-			TXREG = NAK;
-			sync_state = SYNC_IDLE;
+			return;
 		}
-	} else if (sync_state == SYNC_WACK) {
-		if (inbuf == ACK) {
-			TXREG = EOT;
-			sync_state = SYNC_IDLE;
-		} else {
-			TXREG = NAK;
-			sync_state = SYNC_IDLE;
-		}
-	} else {
-		sync_state = SYNC_IDLE;
+		
 	}
+	TXREG = NAK;
+	sync_state = SYNC_IDLE;
+	
 }
 
 #endif
