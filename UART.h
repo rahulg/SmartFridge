@@ -8,19 +8,6 @@
 #ifndef __HEADER_UART__
 #define	__HEADER_UART__
 
-#define ENQ 0x05
-#define ACK 0x06
-#define NAK 0x15
-#define EOT 0x04
-#define DC1 0x11
-#define CAN 0x18
-
-typedef enum {
-	SYNC_IDLE,
-	SYNC_WCMD,
-	SYNC_WACK
-} syncstate;
-
 void uart_init() {
 	// RC7 as input, RC6 as output
 	/*

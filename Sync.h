@@ -18,6 +18,7 @@
 typedef enum {
 	SYNC_IDLE,
 	SYNC_WCMD,
+	SYNC_WDAT,
 	SYNC_WACK
 } syncstate;
 
@@ -53,7 +54,16 @@ void sync_update() {
 			TXREG = 0x80 | 0x00; // TODO: load low grocery state
 			sync_state = SYNC_WACK;
 			return;
+		} else if (inp_buf == DC2) {
+			TXREG = ACK;
+			sync_state = SYNC_WDAT;
+			return;
 		}
+		
+	} else if (sync_state == SYNC_WDAT) {
+		
+		// inp_buf contains data!
+		return;
 		
 	}
 	TXREG = NAK;
