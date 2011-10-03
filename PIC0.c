@@ -18,9 +18,9 @@
 #include "LCD.h"
 #include "UART.h"
 #include "UserInterface.h"
+#include "Sync.h"
 
-volatile syncstate sync_state = SYNC_IDLE;
-volatile uchar inbuf;
+
 
 /*
  * Interrupt Service Routine
@@ -29,47 +29,16 @@ volatile uchar inbuf;
 __interrupt void isr(void)
 {
 	if (RCIE == 1) {
-		if (sync_state == SYNC_IDLE) {
-			inbuf = RCREG;
-			if (inbuf == ENQ) {
-				TXREG = ACK;
-				sync_state = SYNC_WCMD;
-			} else {
-				TXREG = NAK;
-				sync_state = SYNC_IDLE;
-			}
-		} else if (sync_state == SYNC_WCMD) {
-			inbuf = RCREG;
-			if (inbuf == DC1) {
-				TXREG = 0x00; // TODO: load low state
-				sync_state = SYNC_WACK;
-			} else if (inbuf == CAN) {
-				TXREG = ACK;
-				sync_state = SYNC_IDLE;
-			} else {
-				TXREG = NAK;
-				sync_state = SYNC_IDLE;
-			}
-		} else if (sync_state == SYNC_WACK) {
-			inbuf = RCREG;
-			if (inbuf == ACK) {
-				TXREG = EOT;
-				sync_state = SYNC_IDLE;
-			} else {
-				TXREG = NAK;
-				sync_state = SYNC_IDLE;
-			}
-		} else {
-			sync_state = SYNC_IDLE;
-		}
+		sync_update();
 	}
 }
 
 int main(void) {
 	
 	init_ctrl();
-	uart_init();
+	sync_init();
 	ui_init();
+	
 	while (1) {
 		ui_update();
 	}
