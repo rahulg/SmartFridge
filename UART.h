@@ -14,9 +14,12 @@ void uart_init() {
 	TRISC = TRISC | 0x80;
 	TRISC = TRISC & 0xBF;
 	*/
-
-	BRGH = 0; // Low Speed
-	SPBRG = 0x81; // 0x81 = 2400, 0x1F = 9600
+	
+	// 2400 = 0, 0x81
+	// 9600 = 0, 0x1F
+	// 33.6 = 1, 0x24
+	BRGH = 1; // Low/High Speed
+	SPBRG = 0x24; // Baud rate generator
 	
 	// Asynch mode
 	SYNC = 0;

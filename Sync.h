@@ -14,7 +14,7 @@
 #define EOT 0x04
 #define DC1 0x11
 #define DC2 0x12
-#define CAN 0x18
+#define SYN 0x16
 
 typedef enum {
 	SYNC_OFF,
@@ -42,42 +42,48 @@ void sync_update() {
 		return;
 	}
 	
-	if (inp_buf == CAN || inp_buf == EOT
-		|| (sync_state == SYNC_WACK && inp_buf == ACK)) {
+	if (sync_state == SYNC_IDLE) {
 		
-		TXREG = EOT;
-		data_bytes = 0;
-		sync_state = SYNC_IDLE;
-		return;
-		
-	} else if (sync_state == SYNC_IDLE) {
-		
-		if (inp_buf == ENQ) {
+		if (inp_buf == SYN) {
+			TXREG = SYN;
+			return;
+		} else if (inp_buf == ENQ) {
+			RC5 = 1;
 			TXREG = ACK;
 			sync_state = SYNC_WCMD;
 			return;
 		}
 		
+	}  else if (inp_buf == EOT ||
+				(sync_state == SYNC_WACK && inp_buf == ACK)) {
+		RC5 = 0;
+		TXREG = EOT;
+		sync_state = SYNC_IDLE;
+		return;
+		
 	} else if (sync_state == SYNC_WCMD) {
 		
 		if (inp_buf == DC1) {
 			TXREG = 0x80 | (PORTA & 0x1F); // TODO: load low grocery state
+			RC5 = 0;
 			sync_state = SYNC_WACK;
 			return;
 		} else if (inp_buf == DC2) {
-			TXREG = ACK;
+			TXREG = DC2;
+			data_bytes = 0;
 			sync_state = SYNC_WDAT;
 			return;
 		}
 		
 	} else if (sync_state == SYNC_WDAT) {
 		
-		recipe_data[data_bytes++] = inp_buf;
+		recipe_data[data_bytes] = inp_buf;
 		TXREG = ACK;
 		
-		if (data_bytes > 6) {
+		if (data_bytes == 6) {
+			RC5 = 0;
 			sync_state = SYNC_WACK;
-			addr = recipe_data[0] & 0x7F; // reset bit 7
+			addr = (recipe_data[0] & 0x7F) * 6;
 			eep_write(addr, recipe_data[1]);
 			eep_write(addr+1, recipe_data[2]);
 			eep_write(addr+2, recipe_data[3]);
@@ -85,11 +91,11 @@ void sync_update() {
 			eep_write(addr+4, recipe_data[5]);
 			eep_write(addr+5, recipe_data[6]);
 		}
+		
+		++data_bytes;
 		return;
 		
 	}
-	TXREG = NAK;
-	sync_state = SYNC_IDLE;
 	
 }
 
