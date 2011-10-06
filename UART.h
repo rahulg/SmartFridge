@@ -18,8 +18,9 @@ void uart_init() {
 	// 2400 = 0, 0x81
 	// 9600 = 0, 0x1F
 	// 33.6 = 1, 0x24
+	// 57.6 = 1, 0x14
 	BRGH = 1; // Low/High Speed
-	SPBRG = 0x24; // Baud rate generator
+	SPBRG = 0x14; // Baud rate generator
 	
 	// Asynch mode
 	SYNC = 0;
