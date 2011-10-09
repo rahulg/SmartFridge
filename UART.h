@@ -9,12 +9,6 @@
 #define	__HEADER_UART__
 
 void uart_init() {
-	// RC7 as input, RC6 as output
-	/*
-	TRISC = TRISC | 0x80;
-	TRISC = TRISC & 0xBF;
-	*/
-	
 	// 2400 = 0, 0x81
 	// 9600 = 0, 0x1F
 	// 33.6 = 1, 0x24
