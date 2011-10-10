@@ -13,8 +13,6 @@
  */
 #define LCD_DAT PORTB
 
-// Proper Alloc: RC0, RC1, RC2, RC3, RD0, RD1
-// Fake Alloc: RA5, RA4, RA3, RA2, RA1, RA0
 #define LCD_CS1 RC0
 #define LCD_CS2 RC1
 #define LCD_RES RC2
@@ -30,6 +28,7 @@
 #define BTN_R3 RD2
 
 #define OUT_REC RC4
+#define OUT_PLY RC5
 
 #define TMP_GR PORTA
 #define TMP_R0 RA5

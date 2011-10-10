@@ -73,7 +73,8 @@ void ui_main() {
 	lcd_str("<Groceries", 0, 2);
 	lcd_str("<Recipes", 0, 4);
 	lcd_str("<Sync:", 0, 6);
-	lcd_str("Memo>", roffset(5), 2);
+	lcd_str("Record>", roffset(7), 2);
+	lcd_str("Play>", roffset(5), 4);
 	lcd_str("Reset>", roffset(6), 6);
 	chk_sync();
 }
@@ -158,6 +159,11 @@ void ui_manage(button pressed) {
 				ui_memo();
 				delay_msec(REC_PULSE);
 				OUT_REC = 0;
+				break;
+			case BUTTON_R2:
+				OUT_PLY = 1;
+				delay_msec(REC_PULSE);
+				OUT_PLY = 0;
 				break;
 			case BUTTON_R3:
 				eep_set();

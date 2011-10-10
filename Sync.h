@@ -48,7 +48,6 @@ void sync_update() {
 			TXREG = SYN;
 			return;
 		} else if (inp_buf == ENQ) {
-			RC5 = 1;
 			TXREG = ACK;
 			sync_state = SYNC_WCMD;
 			return;
@@ -56,7 +55,6 @@ void sync_update() {
 		
 	}  else if (inp_buf == EOT ||
 				(sync_state == SYNC_WACK && inp_buf == ACK)) {
-		RC5 = 0;
 		TXREG = EOT;
 		sync_state = SYNC_IDLE;
 		return;
@@ -65,7 +63,6 @@ void sync_update() {
 		
 		if (inp_buf == DC1) {
 			TXREG = 0x80 | (PORTA & 0x1F); // TODO: load low grocery state
-			RC5 = 0;
 			sync_state = SYNC_WACK;
 			return;
 		} else if (inp_buf == DC2) {
@@ -81,7 +78,6 @@ void sync_update() {
 		TXREG = ACK;
 		
 		if (data_bytes == 6) {
-			RC5 = 0;
 			sync_state = SYNC_WACK;
 			addr = (recipe_data[0] & 0x7F) * 6;
 			eep_write(addr, (recipe_data[1] & 0x7F));
