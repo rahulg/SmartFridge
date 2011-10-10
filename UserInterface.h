@@ -80,6 +80,7 @@ void ui_main() {
 }
 
 void chk_grocery() {
+	// [SIM] Read DIP switches & output ticks and crosses
 	temp = TMP_GR & 0x1F;
 	for (ii = 0; ii < 5; ++ii) {
 		lcd_str(temp & (0x01<<ii) ? "/" : "\\", 42, ii+2);
@@ -101,7 +102,7 @@ void ui_groceries() {
 
 void ui_recipes() {
 	char str[7];
-	str[6] = 0x00;
+	str[6] = 0x00; // NULL char
 	lcd_clear();
 	lcd_header("Recipes");
 	str[0] = '<';
@@ -111,8 +112,8 @@ void ui_recipes() {
 	lcd_str(str, 0, 4);
 	recipe_name(2, str+1);
 	lcd_str(str, 0, 6);
-	recipe_name(3, str);
 	str[5] = '>';
+	recipe_name(3, str);
 	lcd_str(str, roffset(6), 2);
 	recipe_name(4, str);
 	lcd_str(str, roffset(6), 4);
@@ -126,6 +127,9 @@ void ui_memo() {
 	lcd_str("Stop>", roffset(5), 2);
 }
 
+/*
+ * [SIM] Output recipe code
+ */
 void tmp_recout(uchar code) {
 	TMP_R2 = (code & 0x04) >> 2;
 	TMP_R1 = (code & 0x02) >> 1;
@@ -234,7 +238,9 @@ void ui_init() {
 void ui_update() {
 	button pressed = BUTTON_NIL;
 	pressed = button_poll();
-	ui_manage(pressed);
+	if (pressed != BUTTON_NIL) {
+		ui_manage(pressed);
+	}
 }
 
 #endif

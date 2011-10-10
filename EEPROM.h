@@ -40,6 +40,7 @@ void eep_write(uchar addr, uchar data) {
 	
 }
 
+// Glitch-prevention: same function should not be called from main+ISR
 void eep_write2(uchar addr, uchar data) {
 	
 	EEADR = addr;
@@ -62,12 +63,18 @@ void eep_write2(uchar addr, uchar data) {
 	
 }
 
+/*
+ * Reads a string from data EEPROM
+ */
 void eep_rstr(char* str, uchar index, uchar length) {
 	for (ii = 0; ii < length; ++ii) {
 		str[ii] = eep_read(index+ii);
 	}
 }
 
+/*
+ * Wipes data EEPROM
+ */
 void eep_set() {
 	for (ii = 0; ii < 5; ++ii) {
 		eep_write2(6*ii, 0x00);

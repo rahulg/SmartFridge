@@ -64,6 +64,7 @@ void lcd_init() {
 void lcd_clear() {
 	uchar x, y = 0;
 	
+	// Zero out all pages
 	for (x = 0; x < 8; ++x) {
 		lcd_write((x & 0x07) | 0xB8, INSTR, 1, 1);
 		lcd_write(0x40, INSTR, 1, 1);
@@ -76,6 +77,7 @@ void lcd_clear() {
 void lcd_allon() {
 	uchar x, y = 0;
 	
+	// Fill all pages
 	for (x = 0; x < 8; ++x) {
 		lcd_write((x & 0x07) | 0xB8, INSTR, 1, 1);
 		lcd_write(0x40, INSTR, 1, 1);
@@ -88,6 +90,7 @@ void lcd_allon() {
 void lcd_set_page(uchar x, uchar y, uchar data) {
 	uchar cs1, cs2;
 	
+	// Chip selects based on x-coord
 	if (y < 64) {
 		cs1 = 1;
 		cs2 = 0;
@@ -106,6 +109,10 @@ void lcd_char(uchar data) {
 	uchar i;
 	uchar glyph[5] = {0,0,0,0,0};
 	
+	// Insufficient RAM to use a LUT
+	// too much work to write to data EEPROM each time
+	// Find: MOTHEROFALLSWITCH for end.
+	// Forward slash remapped to tick, backslash remapped to cross
 	switch(data)
 	{
 		case ' ':
@@ -760,12 +767,15 @@ void lcd_char(uchar data) {
 			glyph[4] = 0x02;
 			break;
 	}
+	// END MOTHEROFALLSWITCH
 	
 	for (i = 0; i < 5; ++i) {
 		lcd_set_page(lcd_y, lcd_x + i, glyph[i]);
 	}
 	
 	lcd_set_page(lcd_y, lcd_x + 5, 0x00);
+	
+	// Cursor adjustments
 	lcd_x += 6;
 	if (lcd_x >= 128) {
 		lcd_x = 0;
@@ -779,11 +789,16 @@ void lcd_char(uchar data) {
 void lcd_str(char* str, uchar cur_x, uchar cur_y) {
 	lcd_x = cur_x;
 	lcd_y = cur_y;
+	
+	// Write chars until NULLCHAR
 	while (*str) {
 		lcd_char(*(str++));
 	}
 }
 
+/*
+ * Prints a string in the middle of the top line
+ */
 void lcd_header(char* str) {
 	uchar count = strlen(str);
 	lcd_str(str, (128-(count*6))/2, 0);

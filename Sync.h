@@ -62,10 +62,12 @@ void sync_update() {
 	} else if (sync_state == SYNC_WCMD) {
 		
 		if (inp_buf == DC1) {
+			// DC1: Grocery status
 			TXREG = 0x80 | (PORTA & 0x1F);
 			sync_state = SYNC_WACK;
 			return;
 		} else if (inp_buf == DC2) {
+			// DC2: Recipe programming
 			TXREG = DC2;
 			data_bytes = 0;
 			sync_state = SYNC_WDAT;
@@ -77,6 +79,7 @@ void sync_update() {
 		recipe_data[data_bytes] = inp_buf;
 		TXREG = ACK;
 		
+		// Recipe ID + Groceries + 5 byte name
 		if (data_bytes == 6) {
 			sync_state = SYNC_WACK;
 			addr = (recipe_data[0] & 0x7F) * 6;
