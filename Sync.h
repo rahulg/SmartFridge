@@ -62,7 +62,7 @@ void sync_update() {
 	} else if (sync_state == SYNC_WCMD) {
 		
 		if (inp_buf == DC1) {
-			TXREG = 0x80 | (PORTA & 0x1F); // TODO: load low grocery state
+			TXREG = 0x80 | (PORTA & 0x1F);
 			sync_state = SYNC_WACK;
 			return;
 		} else if (inp_buf == DC2) {
