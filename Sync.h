@@ -84,7 +84,7 @@ void sync_update() {
 			RC5 = 0;
 			sync_state = SYNC_WACK;
 			addr = (recipe_data[0] & 0x7F) * 6;
-			eep_write(addr, recipe_data[1]);
+			eep_write(addr, (recipe_data[1] & 0x7F));
 			eep_write(addr+1, recipe_data[2]);
 			eep_write(addr+2, recipe_data[3]);
 			eep_write(addr+3, recipe_data[4]);
