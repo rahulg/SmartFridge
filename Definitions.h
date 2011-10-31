@@ -23,7 +23,7 @@ typedef unsigned int uint;
 /*
  * Global temps
  */
-uchar ii, temp, del1;
+uchar ii, temp, del1, state;
 uint del2;
 
 #endif

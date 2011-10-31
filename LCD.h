@@ -74,6 +74,7 @@ void lcd_clear() {
 	}
 }
 
+/* DISABLED
 void lcd_allon() {
 	uchar x, y = 0;
 	
@@ -86,6 +87,7 @@ void lcd_allon() {
 		}
 	}
 }
+ */
 
 void lcd_set_page(uchar x, uchar y, uchar data) {
 	uchar cs1, cs2;

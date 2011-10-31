@@ -14,10 +14,13 @@
 #include "Definitions.h"
 #include "Support.h"
 #include "Delay.h"
+#include "ADC.h"
 #include "Ports0.h"
 #include "LCD.h"
 #include "UART.h"
 #include "EEPROM.h"
+#include "Grocery.h"
+#include "Recipe.h"
 #include "Sync.h"
 #include "UserInterface.h"
 
@@ -35,6 +38,7 @@ __interrupt void isr(void)
 int main(void) {
 	
 	init_ctrl();
+	adc_init();
 	sync_init();
 	ui_init();
 	

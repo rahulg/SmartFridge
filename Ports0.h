@@ -27,24 +27,30 @@
 #define BTN_R2 RD4
 #define BTN_R3 RD2
 
-#define OUT_REC RC4
-#define OUT_PLY RC5
+#define SNS_MLK adc_read(0)
+#define SNS_VEG adc_read(1)
+#define SNS_FRU adc_read(2)
+#define SNS_EG1 adc_read(3)
+#define SNS_EG2 adc_read(4)
+#define SNS_CHO RE1
 
-#define TMP_GR PORTA
-#define TMP_R0 RA5
-#define TMP_R1 RE0
-#define TMP_R2 RE1
+#define VOI_ENA RE2
+#define VOI_RPS RC4
+#define VOI_MOD RC5
+
+#define MODE_REC 1
+#define MODE_PLY 0
 
 /*
  * Control Registers
  */
 void init_ctrl() {
-	ADCON1 = 0x06;
-	TRISA = 0x1F;
+	ADCON1 = 0x82;
+	TRISA = 0xFF;
 	TRISB = 0x00;
 	TRISC = 0x80;
 	TRISD = 0xFC;
-	TRISE = 0x00;
+	TRISE = 0x02;
 	
 	PORTA = 0x00;
 	PORTB = 0x00;

@@ -80,11 +80,35 @@ void ui_main() {
 }
 
 void chk_grocery() {
-	// [SIM] Read DIP switches & output ticks and crosses
-	temp = TMP_GR & 0x1F;
-	for (ii = 0; ii < 5; ++ii) {
-		lcd_str(temp & (0x01<<ii) ? "/" : "\\", 42, ii+2);
-	}
+	char* value="  ";
+	
+	state = 0;
+	check_milk();
+	value[0] = itoa(state / 10);
+	value[1] = itoa(state % 10);
+	lcd_str(value, 42, 2);
+	
+	state = 0;
+	check_eggs();
+	value[0] = itoa(state / 10);
+	value[1] = itoa(state % 10);
+	lcd_str(value, 42, 3);
+	
+	state = 0;
+	check_fruit();
+	value[0] = itoa(state / 10);
+	value[1] = itoa(state % 10);
+	lcd_str(value, 42, 4);
+	
+	state = 0;
+	check_veg();
+	value[0] = itoa(state / 10);
+	value[1] = itoa(state % 10);
+	lcd_str(value, 42, 5);
+	
+	state = 0;
+	check_choc();
+	lcd_str(state ? "/" : "\\", 42, 6);
 }
 
 void ui_groceries() {
@@ -120,22 +144,42 @@ void ui_recipes() {
 	lcd_str("Back>", roffset(5), 6);
 }
 
+void chk_recipe(uchar recipe) {
+	uchar tmp1, tmp2 = 42;
+	char outp[2] = {0, 0};
+	tmp1 = recipe_check(recipe);
+	outp[0] = tmp1 ? '/' : '\\';
+	
+	switch (recipe) {
+		case 0:
+			tmp1 = 2;
+			break;
+		case 1:
+			tmp1 = 4;
+			break;
+		case 2:
+			tmp1 = 6;
+			break;
+		case 3:
+			tmp1 = 2;
+			tmp2 = roffset(8);
+			break;
+		case 4:
+			tmp1 = 4;
+			tmp2 = roffset(8);
+			break;
+		default:
+			break;
+	}
+	
+	lcd_str(outp, tmp2, tmp1);
+}
+
 void ui_memo() {
 	lcd_clear();
 	lcd_header("Memo");
 	lcd_str("Recording...", 28, 4);
 	lcd_str("Stop>", roffset(5), 2);
-}
-
-/*
- * [SIM] Output recipe code
- */
-void tmp_recout(uchar code) {
-	TMP_R2 = (code & 0x04) >> 2;
-	TMP_R1 = (code & 0x02) >> 1;
-	TMP_R0 = code * 0x01;
-	delay_msec(REC_PULSE);
-	TMP_R2 = 0; TMP_R1 = 0; TMP_R0 = 0;
 }
 
 void ui_manage(button pressed) {
@@ -159,15 +203,17 @@ void ui_manage(button pressed) {
 				break;
 			case BUTTON_R1:
 				ui_state = UI_MEMO;
-				OUT_REC = 1;
+				VOI_MOD = 0;
+				VOI_RPS = MODE_REC;
+				VOI_ENA = 1;
 				ui_memo();
-				delay_msec(REC_PULSE);
-				OUT_REC = 0;
 				break;
 			case BUTTON_R2:
-				OUT_PLY = 1;
+				VOI_MOD = 0;
+				VOI_RPS = MODE_PLY;
+				VOI_ENA = 1;
 				delay_msec(REC_PULSE);
-				OUT_PLY = 0;
+				VOI_ENA = 1;
 				break;
 			case BUTTON_R3:
 				eep_set();
@@ -190,19 +236,19 @@ void ui_manage(button pressed) {
 	} else if (ui_state == UI_REC) {
 		switch (pressed) {
 			case BUTTON_L1:
-				tmp_recout(1);
+				chk_recipe(0);
 				break;
 			case BUTTON_L2:
-				tmp_recout(2);
+				chk_recipe(1);
 				break;
 			case BUTTON_L3:
-				tmp_recout(3);
+				chk_recipe(2);
 				break;
 			case BUTTON_R1:
-				tmp_recout(4);
+				chk_recipe(3);
 				break;
 			case BUTTON_R2:
-				tmp_recout(5);
+				chk_recipe(4);
 				break;
 			case BUTTON_R3:
 				ui_state = UI_MAIN;
@@ -215,10 +261,8 @@ void ui_manage(button pressed) {
 		switch (pressed) {
 			case BUTTON_R1:
 				ui_state = UI_MAIN;
-				OUT_REC = 1;
+				VOI_ENA = 0;
 				ui_main();
-				delay_msec(REC_PULSE);
-				OUT_REC = 0;
 				break;
 			default:
 				break;
