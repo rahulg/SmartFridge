@@ -26,12 +26,13 @@ typedef enum {
 	UI_MAIN,
 	UI_GROC,
 	UI_REC,
-	UI_MEMO
+	UI_MEMO,
+	UI_DEBUG
 } uistate;
 
 uistate ui_state = UI_MAIN;
 
-button button_poll() {
+button button_poll() {	
 	if (BTN_L1) {
 		while (BTN_L1);
 		return BUTTON_L1;
@@ -80,30 +81,45 @@ void ui_main() {
 }
 
 void chk_grocery() {
-	char* value="  ";
-	
-	state = 0;
-	check_milk();
-	value[0] = itoa(state / 10);
-	value[1] = itoa(state % 10);
-	lcd_str(value, 42, 2);
+	char value[3] = { 0, 0, 0 };
 	
 	state = 0;
 	check_eggs();
-	value[0] = itoa(state / 10);
-	value[1] = itoa(state % 10);
+	value[0] = ' ';
+	value[1] = (state % 10) + 0x30;
 	lcd_str(value, 42, 3);
 	
 	state = 0;
+	check_milk();
+	if (state < 75) {
+		value[0] = (state / 10) + 0x30;
+		value[1] = (state % 10) + 0x30;
+	} else {
+		value[0] = 'O';
+		value[1] = 'K';
+	}
+	lcd_str(value, 42, 2);
+	
+	state = 0;
 	check_fruit();
-	value[0] = itoa(state / 10);
-	value[1] = itoa(state % 10);
+	if (state < 75) {
+		value[0] = (state / 10) + 0x30;
+		value[1] = (state % 10) + 0x30;
+	} else {
+		value[0] = 'O';
+		value[1] = 'K';
+	}
 	lcd_str(value, 42, 4);
 	
 	state = 0;
 	check_veg();
-	value[0] = itoa(state / 10);
-	value[1] = itoa(state % 10);
+	if (state < 75) {
+		value[0] = (state / 10) + 0x30;
+		value[1] = (state % 10) + 0x30;
+	} else {
+		value[0] = 'O';
+		value[1] = 'K';
+	}
 	lcd_str(value, 42, 5);
 	
 	state = 0;
@@ -182,6 +198,56 @@ void ui_memo() {
 	lcd_str("Stop>", roffset(5), 2);
 }
 
+void ui_debug_refresh() {
+	
+	uint sensor_val;
+	char* hexstr = "0123456789ABCDEF";
+	char show[6] = {'0', 'x', ' ', ' ', ' ', 0x00};
+	
+	lcd_clear();
+	
+	sensor_val = SNS_MLK;
+	show[2] = hexstr[(sensor_val&0xF00) >>8];
+	show[3] = hexstr[(sensor_val&0x0F0) >>4];
+	show[4] = hexstr[(sensor_val&0x00F)];
+	lcd_str(show, roffset(5), 2);
+	
+	sensor_val = SNS_FRU;
+	show[2] = hexstr[(sensor_val&0xF00) >>8];
+	show[3] = hexstr[(sensor_val&0x0F0) >>4];
+	show[4] = hexstr[(sensor_val&0x00F)];
+	lcd_str(show, roffset(5), 3);
+	
+	sensor_val = SNS_VEG;
+	show[2] = hexstr[(sensor_val&0xF00) >>8];
+	show[3] = hexstr[(sensor_val&0x0F0) >>4];
+	show[4] = hexstr[(sensor_val&0x00F)];
+	lcd_str(show, roffset(5), 4);
+	
+	sensor_val = SNS_EG1;
+	show[2] = hexstr[(sensor_val&0xF00) >>8];
+	show[3] = hexstr[(sensor_val&0x0F0) >>4];
+	show[4] = hexstr[(sensor_val&0x00F)];
+	lcd_str(show, roffset(5), 5);
+	
+	sensor_val = SNS_EG2;
+	show[2] = hexstr[(sensor_val&0xF00) >>8];
+	show[3] = hexstr[(sensor_val&0x0F0) >>4];
+	show[4] = hexstr[(sensor_val&0x00F)];
+	lcd_str(show, roffset(5), 6);
+}
+
+void ui_debug() {
+	lcd_header("Debug");
+	lcd_str("Milk", 0, 2);
+	lcd_str("Fruit", 0, 3);
+	lcd_str("Vegetables", 0, 4);
+	lcd_str("Egg 1", 0, 5);
+	lcd_str("Egg 2", 0, 6);
+	
+	ui_debug_refresh();
+}
+
 void ui_manage(button pressed) {
 	if (ui_state == UI_MAIN) {
 		switch (pressed) {
@@ -223,6 +289,10 @@ void ui_manage(button pressed) {
 		}
 	} else if (ui_state == UI_GROC) {
 		switch (pressed) {
+			case BUTTON_L1:
+				ui_state = UI_DEBUG;
+				ui_debug();
+				break;
 			case BUTTON_R1:
 				chk_grocery();
 				break;
@@ -262,6 +332,18 @@ void ui_manage(button pressed) {
 			case BUTTON_R1:
 				ui_state = UI_MAIN;
 				VOI_ENA = 0;
+				ui_main();
+				break;
+			default:
+				break;
+		}
+	} else if (ui_state == UI_DEBUG) {
+		switch (pressed) {
+			case BUTTON_R1:
+				ui_debug_refresh();
+				break;
+			case BUTTON_R3:
+				ui_state = UI_MAIN;
 				ui_main();
 				break;
 			default:

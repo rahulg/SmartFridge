@@ -63,7 +63,39 @@ void sync_update() {
 		
 		if (inp_buf == DC1) {
 			// DC1: Grocery status
-			TXREG = 0x80 | (PORTA & 0x1F);
+			temp = 0x00;
+			/*
+			state = 0;
+			check_milk();
+			if (state < 50) {
+				temp |= 0x01;
+			}
+			
+			state = 0;
+			check_eggs();
+			if (state < 3) {
+				temp |= 0x02;
+			}
+			
+			state = 0;
+			check_fruit();
+			if (state < 50) {
+				temp |= 0x04;
+			}
+			
+			state = 0;
+			check_veg();
+			if (state < 50) {
+				temp |= 0x08;
+			}
+			
+			state = 0;
+			check_choc();
+			if (state == 0) {
+				temp |= 0x10;
+			}
+			*/
+			TXREG = 0x80 | (temp & 0x1F);
 			sync_state = SYNC_WACK;
 			return;
 		} else if (inp_buf == DC2) {
