@@ -8,11 +8,6 @@
 #ifndef __HEADER_ADC__
 #define __HEADER_ADC__
 
-
-// Include Headers
-#include "Definitions.h"
-#include "Delay.h"
-
 typedef unsigned int adc_t;
 
 
@@ -30,8 +25,6 @@ void adc_init() {
 }
 
 adc_t adc_read(int channel) {
-	
-	adc_t value;
 	
 	switch (channel) {
 		case 0:
@@ -71,12 +64,7 @@ adc_t adc_read(int channel) {
 	while (GO);
 	
 	// Read the values in the register pair
-	value = (ADRESH << 8) + ADRESL;
-	
-	// Wait for 2TAD
-	delay_usec(4);
-	
-	return value;
+	return ( (ADRESH << 8) + ADRESL );
 }
 
 #endif

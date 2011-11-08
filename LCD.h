@@ -19,6 +19,8 @@ uchar lcd_y = 0;
 uchar lcd_x = 0;
 
 void lcd_write(uchar data, uchar di, uchar cs1, uchar cs2) {
+	TMR1ON = 0;
+	
 	// Initialise
 	LCD_CS1 = LOW;
 	LCD_CS2 = LOW;
@@ -41,16 +43,32 @@ void lcd_write(uchar data, uchar di, uchar cs1, uchar cs2) {
 	
 	// falling edge will latch data in register
 	LCD_EN = HIGH;
-	delay_usec(1);
-	LCD_EN = LOW;	
+	asm("nop; nop; nop; nop; nop;");
+	asm("nop; nop; nop; nop; nop;");
+	asm("nop; nop; nop; nop; nop;");
+	LCD_EN = LOW;
+	
+	TMR1ON = 1;
 }
 
 void lcd_init() {
+	TMR1ON = 0;
+	GIE = 0;
+	
 	// Reset LCD
 	LCD_CS1 = HIGH;
 	LCD_CS2 = HIGH;
 	LCD_RES = LOW;
-	delay_usec(10);
+	asm("nop; nop; nop; nop; nop;");
+	asm("nop; nop; nop; nop; nop;");
+	asm("nop; nop; nop; nop; nop;");
+	asm("nop; nop; nop; nop; nop;");
+	asm("nop; nop; nop; nop; nop;");
+	asm("nop; nop; nop; nop; nop;");
+	asm("nop; nop; nop; nop; nop;");
+	asm("nop; nop; nop; nop; nop;");
+	asm("nop; nop; nop; nop; nop;");
+	asm("nop; nop; nop; nop; nop;");
 	LCD_RES = HIGH;
 	
 	// Display ON
@@ -59,6 +77,8 @@ void lcd_init() {
 	// Start on line 0
 	lcd_write(0xC0, INSTR, 1, 1);
 	
+	GIE = 1;
+	TMR1ON = 1;
 }
 
 void lcd_clear() {
@@ -90,6 +110,7 @@ void lcd_allon() {
  */
 
 void lcd_set_page(uchar x, uchar y, uchar data) {
+	
 	uchar cs1, cs2;
 	
 	// Chip selects based on x-coord
@@ -105,9 +126,11 @@ void lcd_set_page(uchar x, uchar y, uchar data) {
 	lcd_write(y + 0x40, INSTR, cs1, cs2);
 	lcd_write(x + 0xB8, INSTR, cs1, cs2);
 	lcd_write(data, LDATA, cs1, cs2);
+	
 }
 
 void lcd_char(uchar data) {
+	
 	uchar i;
 	uchar glyph[5] = {0,0,0,0,0};
 	
@@ -786,9 +809,12 @@ void lcd_char(uchar data) {
 			lcd_y = 0;
 		}
 	}
+	
 }
 
 void lcd_str(char* str, uchar cur_x, uchar cur_y) {
+	GIE = 0;
+	
 	lcd_x = cur_x;
 	lcd_y = cur_y;
 	
@@ -796,14 +822,19 @@ void lcd_str(char* str, uchar cur_x, uchar cur_y) {
 	while (*str) {
 		lcd_char(*(str++));
 	}
+	
+	GIE = 1;
 }
 
 /*
  * Prints a string in the middle of the top line
  */
 void lcd_header(char* str) {
-	uchar count = strlen(str);
-	lcd_str(str, (128-(count*6))/2, 0);
+	GIE = 0;
+	
+	lcd_str(str, (128-(strlen(str)*6))/2, 0);
+	
+	GIE = 1;
 }
 
 #endif

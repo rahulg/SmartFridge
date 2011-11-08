@@ -26,11 +26,11 @@ typedef enum {
 	UI_MAIN,
 	UI_GROC,
 	UI_REC,
-	UI_MEMO,
-	UI_DEBUG
+	UI_MEMO
 } uistate;
 
 uistate ui_state = UI_MAIN;
+uchar rec_state = 0x00;
 
 button button_poll() {	
 	if (BTN_L1) {
@@ -74,8 +74,7 @@ void ui_main() {
 	lcd_str("<Groceries", 0, 2);
 	lcd_str("<Recipes", 0, 4);
 	lcd_str("<Sync:", 0, 6);
-	lcd_str("Record>", roffset(7), 2);
-	lcd_str("Play>", roffset(5), 4);
+	lcd_str("Memo>", roffset(5), 2);
 	lcd_str("Reset>", roffset(6), 6);
 	chk_sync();
 }
@@ -83,48 +82,38 @@ void ui_main() {
 void chk_grocery() {
 	char value[3] = { 0, 0, 0 };
 	
-	state = 0;
-	check_eggs();
 	value[0] = ' ';
-	value[1] = (state % 10) + 0x30;
+	value[1] = (st_eggs % 10) + 0x30;
 	lcd_str(value, 42, 3);
 	
-	state = 0;
-	check_milk();
-	if (state < 75) {
-		value[0] = (state / 10) + 0x30;
-		value[1] = (state % 10) + 0x30;
+	if (st_milk < 75) {
+		value[0] = (st_milk / 10) + 0x30;
+		value[1] = (st_milk % 10) + 0x30;
 	} else {
 		value[0] = 'O';
 		value[1] = 'K';
 	}
 	lcd_str(value, 42, 2);
 	
-	state = 0;
-	check_fruit();
-	if (state < 75) {
-		value[0] = (state / 10) + 0x30;
-		value[1] = (state % 10) + 0x30;
+	if (st_fru < 75) {
+		value[0] = (st_fru / 10) + 0x30;
+		value[1] = (st_fru % 10) + 0x30;
 	} else {
 		value[0] = 'O';
 		value[1] = 'K';
 	}
 	lcd_str(value, 42, 4);
 	
-	state = 0;
-	check_veg();
-	if (state < 75) {
-		value[0] = (state / 10) + 0x30;
-		value[1] = (state % 10) + 0x30;
+	if (st_veg < 75) {
+		value[0] = (st_veg / 10) + 0x30;
+		value[1] = (st_veg % 10) + 0x30;
 	} else {
 		value[0] = 'O';
 		value[1] = 'K';
 	}
 	lcd_str(value, 42, 5);
 	
-	state = 0;
-	check_choc();
-	lcd_str(state ? "/" : "\\", 42, 6);
+	lcd_str(st_choc ? "/" : "\\", 42, 6);
 }
 
 void ui_groceries() {
@@ -194,58 +183,11 @@ void chk_recipe(uchar recipe) {
 void ui_memo() {
 	lcd_clear();
 	lcd_header("Memo");
-	lcd_str("Recording...", 28, 4);
-	lcd_str("Stop>", roffset(5), 2);
-}
-
-void ui_debug_refresh() {
-	
-	uint sensor_val;
-	char* hexstr = "0123456789ABCDEF";
-	char show[6] = {'0', 'x', ' ', ' ', ' ', 0x00};
-	
-	lcd_clear();
-	
-	sensor_val = SNS_MLK;
-	show[2] = hexstr[(sensor_val&0xF00) >>8];
-	show[3] = hexstr[(sensor_val&0x0F0) >>4];
-	show[4] = hexstr[(sensor_val&0x00F)];
-	lcd_str(show, roffset(5), 2);
-	
-	sensor_val = SNS_FRU;
-	show[2] = hexstr[(sensor_val&0xF00) >>8];
-	show[3] = hexstr[(sensor_val&0x0F0) >>4];
-	show[4] = hexstr[(sensor_val&0x00F)];
-	lcd_str(show, roffset(5), 3);
-	
-	sensor_val = SNS_VEG;
-	show[2] = hexstr[(sensor_val&0xF00) >>8];
-	show[3] = hexstr[(sensor_val&0x0F0) >>4];
-	show[4] = hexstr[(sensor_val&0x00F)];
-	lcd_str(show, roffset(5), 4);
-	
-	sensor_val = SNS_EG1;
-	show[2] = hexstr[(sensor_val&0xF00) >>8];
-	show[3] = hexstr[(sensor_val&0x0F0) >>4];
-	show[4] = hexstr[(sensor_val&0x00F)];
-	lcd_str(show, roffset(5), 5);
-	
-	sensor_val = SNS_EG2;
-	show[2] = hexstr[(sensor_val&0xF00) >>8];
-	show[3] = hexstr[(sensor_val&0x0F0) >>4];
-	show[4] = hexstr[(sensor_val&0x00F)];
-	lcd_str(show, roffset(5), 6);
-}
-
-void ui_debug() {
-	lcd_header("Debug");
-	lcd_str("Milk", 0, 2);
-	lcd_str("Fruit", 0, 3);
-	lcd_str("Vegetables", 0, 4);
-	lcd_str("Egg 1", 0, 5);
-	lcd_str("Egg 2", 0, 6);
-	
-	ui_debug_refresh();
+	lcd_str("<Record 1", 0, 2);
+	lcd_str("Stop 1>", roffset(7), 2);
+	lcd_str("<Record 2", 0, 4);
+	lcd_str("Stop 2>", roffset(7), 4);
+	lcd_str("Back>", roffset(5), 6);
 }
 
 void ui_manage(button pressed) {
@@ -269,17 +211,7 @@ void ui_manage(button pressed) {
 				break;
 			case BUTTON_R1:
 				ui_state = UI_MEMO;
-				VOI_MOD = 0;
-				VOI_RPS = MODE_REC;
-				VOI_ENA = 1;
 				ui_memo();
-				break;
-			case BUTTON_R2:
-				VOI_MOD = 0;
-				VOI_RPS = MODE_PLY;
-				VOI_ENA = 1;
-				delay_msec(REC_PULSE);
-				VOI_ENA = 1;
 				break;
 			case BUTTON_R3:
 				eep_set();
@@ -289,10 +221,6 @@ void ui_manage(button pressed) {
 		}
 	} else if (ui_state == UI_GROC) {
 		switch (pressed) {
-			case BUTTON_L1:
-				ui_state = UI_DEBUG;
-				ui_debug();
-				break;
 			case BUTTON_R1:
 				chk_grocery();
 				break;
@@ -329,18 +257,45 @@ void ui_manage(button pressed) {
 		}
 	} else if (ui_state == UI_MEMO) {
 		switch (pressed) {
+			case BUTTON_L1:
+				if (rec_state == 0x00) {
+					VOI_MOD = 0;
+					VOI_RPS = MODE_REC;
+					VOI_ENA = 1;
+					lcd_str("<Record 1 +", 0, 2);
+					rec_state = 0x01;
+				} else if (rec_state == 0x01) {
+					VOI_ENA = 0;
+					lcd_str("<Record 1  ", 0, 2);
+					rec_state = 0x00;
+				}
+				break;
+			case BUTTON_L2:
+				if (rec_state == 0x00) {
+					VOI_MOD = 1;
+					VOI_RPS = MODE_REC;
+					VOI_ENA = 1;
+					lcd_str("<Record 2 +", 0, 4);
+					rec_state = 0x02;
+				} else if (rec_state == 0x02) {
+					VOI_ENA = 0;
+					lcd_str("<Record 2  ", 0, 4);
+					rec_state = 0x00;
+				}
+				break;
 			case BUTTON_R1:
-				ui_state = UI_MAIN;
+				VOI_MOD = 0;
+				VOI_RPS = MODE_PLY;
+				VOI_ENA = 1;
+				delay_msec(REC_PULSE);
 				VOI_ENA = 0;
-				ui_main();
 				break;
-			default:
-				break;
-		}
-	} else if (ui_state == UI_DEBUG) {
-		switch (pressed) {
-			case BUTTON_R1:
-				ui_debug_refresh();
+			case BUTTON_R2:
+				VOI_MOD = 1;
+				VOI_RPS = MODE_PLY;
+				VOI_ENA = 1;
+				delay_msec(REC_PULSE);
+				VOI_ENA = 0;
 				break;
 			case BUTTON_R3:
 				ui_state = UI_MAIN;

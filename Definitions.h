@@ -24,7 +24,6 @@ typedef unsigned int uint;
  * Global temps
  */
 uchar ii, temp, del1;
-volatile uchar state;
 uint del2;
 
 #endif

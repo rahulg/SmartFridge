@@ -14,8 +14,7 @@ uchar eep_read(uchar addr) {
 	EEPGD = 0; // Write to data EEPROM
 	RD = 1; // Initiate read
 	
-	temp = EEDATA;
-	return temp;
+	return EEDATA;
 }
 
 void eep_write(uchar addr, uchar data) {
