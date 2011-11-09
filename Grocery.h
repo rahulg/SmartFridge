@@ -18,40 +18,8 @@
 
 volatile uchar st_milk, st_eggs, st_fru, st_veg, st_choc;
 
-void check_eggs() {
-	st_eggs = 0;
-	
-	if (SNS_EG1 >= EGG_2) {
-		st_eggs += 3;
-	} else if (SNS_EG1 >= EGG_1) {
-		st_eggs += 2;
-	} else if (SNS_EG1 >= EGG_0) {
-		st_eggs += 1;
-	}
-	
-	if (SNS_EG2 >= EGG_2) {
-		st_eggs += 3;
-	} else if (SNS_EG2 >= EGG_1) {
-		st_eggs += 2;
-	} else if (SNS_EG2 >= EGG_0) {
-		st_eggs += 1;
-	}
-}
-
 void check_choc() {
 	st_choc = SNS_CHO;
-}
-
-void check_fruit() {
-	if (SNS_FRU >= PERC_75) {
-		st_fru = 75;
-	} else if (SNS_FRU >= PERC_50) {
-		st_fru = 50;
-	} else if (SNS_FRU >= PERC_25) {
-		st_fru = 25;
-	} else {
-		st_fru = 0;
-	}
 }
 
 void check_milk() {
@@ -75,6 +43,38 @@ void check_veg() {
 		st_veg = 25;
 	} else {
 		st_veg = 0;
+	}
+}
+
+void check_fruit() {
+	if (SNS_FRU >= PERC_75) {
+		st_fru = 75;
+	} else if (SNS_FRU >= PERC_50) {
+		st_fru = 50;
+	} else if (SNS_FRU >= PERC_25) {
+		st_fru = 25;
+	} else {
+		st_fru = 0;
+	}
+}
+
+void check_eggs() {
+	st_eggs = 0;
+	
+	if (SNS_EG1 >= EGG_2) {
+		st_eggs += 3;
+	} else if (SNS_EG1 >= EGG_1) {
+		st_eggs += 2;
+	} else if (SNS_EG1 >= EGG_0) {
+		st_eggs += 1;
+	}
+	
+	if (SNS_EG2 >= EGG_2) {
+		st_eggs += 3;
+	} else if (SNS_EG2 >= EGG_1) {
+		st_eggs += 2;
+	} else if (SNS_EG2 >= EGG_0) {
+		st_eggs += 1;
 	}
 }
 

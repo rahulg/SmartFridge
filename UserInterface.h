@@ -184,9 +184,9 @@ void ui_memo() {
 	lcd_clear();
 	lcd_header("Memo");
 	lcd_str("<Record 1", 0, 2);
-	lcd_str("Stop 1>", roffset(7), 2);
+	lcd_str("Play 1>", roffset(7), 2);
 	lcd_str("<Record 2", 0, 4);
-	lcd_str("Stop 2>", roffset(7), 4);
+	lcd_str("Play 2>", roffset(7), 4);
 	lcd_str("Back>", roffset(5), 6);
 }
 
