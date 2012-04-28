@@ -6,7 +6,7 @@
  */
 
 #ifndef __HEADER_DEFINITIONS__
-#define	__HEADER_DEFINITIONS__
+#define __HEADER_DEFINITIONS__
 
 /*
  * Typedefs: Unsigned variant
@@ -19,11 +19,5 @@ typedef unsigned int uint;
  */
 #define LOW 0
 #define HIGH 1
-
-/*
- * Global temps
- */
-uchar ii, temp, del1;
-uint del2;
 
 #endif

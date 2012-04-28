@@ -6,7 +6,7 @@
  */
 
 #ifndef __HEADER_UI__
-#define	__HEADER_UI__
+#define __HEADER_UI__
 
 #define REC_PULSE 40
 

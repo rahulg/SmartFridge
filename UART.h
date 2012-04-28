@@ -6,7 +6,7 @@
  */
 
 #ifndef __HEADER_UART__
-#define	__HEADER_UART__
+#define __HEADER_UART__
 
 void uart_init() {
 	// 2400 = 0, 0x81

@@ -6,7 +6,7 @@
  */
 
 #ifndef __HEADER_PORTS0__
-#define	__HEADER_PORTS0__
+#define __HEADER_PORTS0__
 
 /*
  * Pin Allocations
@@ -58,5 +58,11 @@ void init_ctrl() {
 	PORTD = 0x00;
 	PORTE = 0x00;
 }
+
+/*
+ * Global vars
+ */
+uchar ii, temp, del1;
+uint del2;
 
 #endif

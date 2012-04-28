@@ -6,7 +6,7 @@
  */
 
 #ifndef __HEADER_SYNC__
-#define	__HEADER_SYNC__
+#define __HEADER_SYNC__
 
 #define ENQ 0x05
 #define ACK 0x06

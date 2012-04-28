@@ -10,7 +10,7 @@
  */
 
 #ifndef __HEADER_LCD__
-#define	__HEADER_LCD__
+#define __HEADER_LCD__
 
 #define LDATA 1
 #define INSTR 0

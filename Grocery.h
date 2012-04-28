@@ -6,11 +6,11 @@
  */
 
 #ifndef __HEADER_GROCERY__
-#define	__HEADER_GROCERY__
+#define __HEADER_GROCERY__
 
-#define PERC_25 0x0FF
-#define PERC_50 0x1FF
-#define PERC_75 0x2FF
+#define PERC_25 0x030
+#define PERC_50 0x062
+#define PERC_75 0x0F4
 
 #define EGG_0 0x120
 #define EGG_1 0x190

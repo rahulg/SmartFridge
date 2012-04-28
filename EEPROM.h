@@ -6,7 +6,7 @@
  */
 
 #ifndef __HEADER_EEP__
-#define	__HEADER_EEP__
+#define __HEADER_EEP__
 
 uchar eep_read(uchar addr) {
 	

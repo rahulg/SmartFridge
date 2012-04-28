@@ -6,7 +6,7 @@
  */
 
 #ifndef __HEADER_DELAY__
-#define	__HEADER_DELAY__
+#define __HEADER_DELAY__
 
 void delay_msec(uchar count) {
 	for (del1 = 0; del1 < count; ++del1) {

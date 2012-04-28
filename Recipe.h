@@ -6,7 +6,7 @@
  */
 
 #ifndef __HEADER_RECIPE__
-#define	__HEADER_RECIPE__
+#define __HEADER_RECIPE__
 
 uchar recipe_check(uchar recipe) {
 	uchar items = eep_read(recipe*6);

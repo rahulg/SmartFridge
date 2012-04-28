@@ -6,7 +6,7 @@
  */
 
 #ifndef __HEADER_TMR1__
-#define	__HEADER_TMR1__
+#define __HEADER_TMR1__
 
 void timer1_init() {
 	//Timer clock source is the internal clock.

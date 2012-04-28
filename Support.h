@@ -6,7 +6,7 @@
  */
 
 #ifndef __HEADER_SUPPORT__
-#define	__HEADER_SUPPORT__
+#define __HEADER_SUPPORT__
 
 /*
  * atoi: offset for char to int
